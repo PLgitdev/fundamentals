@@ -599,20 +599,20 @@ static int[] permutationEquation(int[] p) {
             if(head == null) {
                 return;
             }
-            Node t = head;
+            Node temp = head;
             if(pos == 0) {
-                head = t.next;
+                head = temp.next;
                 return;
             }
             while(pos - 1 > 0) {
-                t = t.next;
+                temp = temp.next;
                 pos--;
             }
-            if(t == null || t.next == null) {
+            if(temp == null || temp.next == null) {
                 return;
             }
             //previous node is found with the loop above t.next 
-            t.next = t.next.next;
+            temp.next = temp.next.next;
         }
         public void removeLast() {
             Node head = this.head;
@@ -998,6 +998,185 @@ static int[] permutationEquation(int[] p) {
         public E peek() {
             return list.peekFirst();
         }
+    }
+    public interface Position<E> {
+        E getElement() throws IllegalStateException;
+    }
+    public interface PositionalList<E> {
+        int size();
+
+        boolean isEmpty();
+
+        Position<E> first();
+
+        Position<E> last();
+
+        Position<E> before(Position<E> p) throws IllegalArgumentException;
+
+        Position<E> after(Position<E> p) throws IllegalArgumentException;
+
+        Position<E> addFirst(E e);
+
+        Position<E> addLast(E e);
+
+        Position<E> addBefore(Position<E> p, E e) throws IllegalArgumentException;;
+
+        Position<E> addAfter(Position<E> p, E e) throws IllegalArgumentException;;
+
+        E set(Position<E> p, E e) throws IllegalArgumentException;
+
+        E remove(Position<E> p, E e) throws IllegalArgumentException;
+    }
+    public static class PositionalLinkedList<E> implements PositionalList<E> {
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
+
+        @Override
+        public Position<E> first() { ;
+            return position(header.next);
+        }
+
+        @Override
+        public Position<E> last() {
+            return position(trailer.prev);
+        }
+
+        @Override
+        public Position<E> before(Position<E> p) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return position(node.prev);
+        }
+
+        @Override
+        public Position<E> after(Position<E> p) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return position(node.next);
+        }
+
+        @Override
+        public Position<E> addFirst(E e) {
+            return addBetween(e, header, header.next);
+        }
+
+        @Override
+        public Position<E> addLast(E e) {
+            return addBetween(e, trailer.prev, trailer);
+        }
+
+        @Override
+        public Position<E> addBefore(Position<E> p, E e) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return addBetween(e, node.prev, node);
+        }
+
+        @Override
+        public Position<E> addAfter(Position<E> p, E e) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return addBetween(e, node, node.next);
+        }
+
+        @Override
+        public E set(Position<E> p, E e) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            E answer =  node.element;
+            node.element = e;
+            return answer;
+        }
+
+        @Override
+        public E remove(Position<E> p, E e) throws IllegalArgumentException {
+            //Validate the position
+            Node<E> node = validate(p);
+            Node<E> predecessor = node.prev;
+            Node<E> successor = node.next;
+            predecessor.next = successor;
+            successor.prev = predecessor;
+            size--;
+            E answer = node.element;
+            node.element = null;
+            node.next = null;
+            node.prev = null;
+            return answer;
+        }
+
+        //Sentinels x
+        Node<E> trailer;
+        Node<E> header;
+
+        int size = 0;
+
+        private static class Node<E> implements Position {
+
+           private E element;
+           private Node<E> prev;
+           private Node<E> next;
+
+           private Node(Node<E> prev, Node<E> next, E element) {
+
+               this.prev = prev;
+               this.next = next;
+               this.element = element;
+
+           }
+
+           public Node<E> getInstance(Node<E> prev, Node<E> next, E element) {
+               return new Node<E>(prev, next, element);
+           }
+
+            @Override
+            public Object getElement() throws IllegalStateException {
+               if (next == null) {
+                   throw new IllegalStateException("Position is no longer valid");
+               }
+               return element;
+               }
+        }
+
+        private PositionalLinkedList(Node<E> header, Node<E> trailer)  {
+            this.header = header;
+            this.trailer = trailer;
+            header.next = trailer;
+        }
+
+        public PositionalLinkedList<E> getInstance()  {
+            Node<E> h = new Node<>(null,null, null);
+            Node<E> t = new Node<>(null, header, null);
+            return new PositionalLinkedList<E>(h, t);
+        }
+
+        // Private utilities  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        private Position<E> addBetween(E e, Node<E> pred, Node<E> succ) {
+            Node<E> newest  = new Node<>(pred, succ, e);
+            pred.next = newest;
+            succ.prev = newest;
+            size++;
+            return newest;
+        }
+
+        private Node<E> validate(Position<E> p) throws IllegalArgumentException {
+            if (!(p instanceof Node)) throw new IllegalArgumentException("Invalid position");
+            Node<E> node = (Node<E> ) p; // safe cast
+            if (node.next == null) {
+                throw new IllegalArgumentException("position is no longer in the list");
+            }
+            return node;
+        }
+
+        private Position<E> position(Node<E> node) {
+            if (node == header || node == trailer) {
+                return null; // Deny sentinel access to user
+            }
+            return node;
+        }
+
     }
 }
 
