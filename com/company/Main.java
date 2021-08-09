@@ -1053,7 +1053,8 @@ static int[] permutationEquation(int[] p) {
         }
 
         @Override
-        public Position<E> first() { ;
+        public Position<E> first() {
+            ;
             return position(header.next);
         }
 
@@ -1099,7 +1100,7 @@ static int[] permutationEquation(int[] p) {
         @Override
         public E set(Position<E> p, E e) throws IllegalArgumentException {
             Node<E> node = validate(p);
-            E answer =  node.element;
+            E answer = node.element;
             node.element = e;
             return answer;
         }
@@ -1128,46 +1129,46 @@ static int[] permutationEquation(int[] p) {
 
         private static class Node<E> implements Position {
 
-           private E element;
-           private Node<E> prev;
-           private Node<E> next;
+            private E element;
+            private Node<E> prev;
+            private Node<E> next;
 
-           private Node(Node<E> prev, Node<E> next, E element) {
+            private Node(Node<E> prev, Node<E> next, E element) {
 
-               this.prev = prev;
-               this.next = next;
-               this.element = element;
+                this.prev = prev;
+                this.next = next;
+                this.element = element;
 
-           }
+            }
 
-           public Node<E> getInstance(Node<E> prev, Node<E> next, E element) {
-               return new Node<E>(prev, next, element);
-           }
+            public Node<E> getInstance(Node<E> prev, Node<E> next, E element) {
+                return new Node<E>(prev, next, element);
+            }
 
             @Override
             public Object getElement() throws IllegalStateException {
-               if (next == null) {
-                   throw new IllegalStateException("Position is no longer valid");
-               }
-               return element;
-               }
+                if (next == null) {
+                    throw new IllegalStateException("Position is no longer valid");
+                }
+                return element;
+            }
         }
 
-        private PositionalLinkedList(Node<E> header, Node<E> trailer)  {
+        private PositionalLinkedList(Node<E> header, Node<E> trailer) {
             this.header = header;
             this.trailer = trailer;
             header.next = trailer;
         }
 
-        public PositionalLinkedList<E> getInstance()  {
-            Node<E> h = new Node<>(null,null, null);
+        public PositionalLinkedList<E> getInstance() {
+            Node<E> h = new Node<>(null, null, null);
             Node<E> t = new Node<>(null, header, null);
             return new PositionalLinkedList<E>(h, t);
         }
 
         // Private utilities  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         private Position<E> addBetween(E e, Node<E> pred, Node<E> succ) {
-            Node<E> newest  = new Node<>(pred, succ, e);
+            Node<E> newest = new Node<>(pred, succ, e);
             pred.next = newest;
             succ.prev = newest;
             size++;
@@ -1176,7 +1177,7 @@ static int[] permutationEquation(int[] p) {
 
         private Node<E> validate(Position<E> p) throws IllegalArgumentException {
             if (!(p instanceof Node)) throw new IllegalArgumentException("Invalid position");
-            Node<E> node = (Node<E> ) p; // safe cast
+            Node<E> node = (Node<E>) p; // safe cast
             if (node.next == null) {
                 throw new IllegalArgumentException("position is no longer in the list");
             }
@@ -1190,6 +1191,52 @@ static int[] permutationEquation(int[] p) {
             return node;
         }
 
+    }
+
+    public interface Tree<E> extends Iterable<E> {
+        Position<E> root();
+
+        Position<E> parent(Position<E> p) throws IllegalArgumentException;
+
+        Iterable<Position<E>> children(Position<E> p) throws IllegalArgumentException;
+
+        int numChildren(Position<E> p) throws IllegalArgumentException;
+
+        boolean isInternal(Position<E> p) throws IllegalArgumentException;
+
+        boolean isExternal(Position<E> p) throws IllegalArgumentException;
+
+        boolean isRoot(Position<E> p) throws IllegalArgumentException;
+
+        int size();
+
+        boolean isEmpty();
+
+        Iterator<E> iterator();
+
+        Iterable<Position<E>> positions();
+    }
+
+    public abstract class AbstractTree<E> implements Tree<E> {
+        @Override
+        public boolean isInternal(Position<E> p) throws IllegalArgumentException {
+            return numChildren(p) >0;
+        }
+
+        @Override
+        public boolean isExternal(Position<E> p) throws IllegalArgumentException {
+            return numChildren(p) == 0;
+        }
+
+        @Override
+        public boolean isRoot(Position<E> p) throws IllegalArgumentException {
+            return p == root();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
     }
 }
 
