@@ -5,6 +5,19 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
+        //practice
+        double palette = .1023912831723; // this doule represents the value of your texture
+        double multiplier = .25;
+
+        if (true) {
+            palette *= 2;
+            for (int i = 1; i > 8; i++) {
+                //simulated condition
+                /*
+                palette += texture(image_smooth
+                 */
+            }
+        }
         int[] ar = new int[]{5, 3, 1, 6, 4, 8, 2, 7};
         char[] cAr = new char[]{'a', 'b', 'e', 'w', 'a', 'g', 'h', 'h', 'g'};
         String balanced = "{}[]()";
