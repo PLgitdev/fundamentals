@@ -1054,7 +1054,6 @@ static int[] permutationEquation(int[] p) {
 
         @Override
         public Position<E> first() {
-            ;
             return position(header.next);
         }
 
@@ -1218,9 +1217,26 @@ static int[] permutationEquation(int[] p) {
     }
 
     public abstract class AbstractTree<E> implements Tree<E> {
+        public int depth(Position<E> p) {
+            if (isRoot(p)) {
+                return 0;
+            }
+            else {
+                return 1 + depth(parent(p));
+            }
+        }
+
+        public int height(Position<E> p) {
+            int h = 0;
+            for (Position<E> c : children(p)) {
+                h = Math.max(h, 1 + height(c));
+            }
+            return h;
+        }
+
         @Override
         public boolean isInternal(Position<E> p) throws IllegalArgumentException {
-            return numChildren(p) >0;
+            return numChildren(p) > 0;
         }
 
         @Override
