@@ -9,14 +9,16 @@ public class Main {
         char[] cAr = new char[]{'a', 'b', 'e', 'w', 'a', 'g', 'h', 'h', 'g'};
         String balanced = "{}[]()";
         String unbalanced = "{{](";
-        List<Integer> walleeInput = Arrays.asList(0,1,1,0);
-        List<Integer> walleeInput2 = Arrays.asList(1,0,1,0,1,1,1);
+        List<Integer> walleeInput = Arrays.asList(0, 1, 1, 0);
+        List<Integer> walleeInput2 = Arrays.asList(1, 0, 1, 0, 1, 1, 1);
         //System.out.println(walleeCleanUp( 4, walleeInput));
         //System.out.println(walleeCleanUp( 3, walleeInput2));
-        QuickSort q = new QuickSort();
-        q.sort(ar, 0, ar.length - 1);
-        //refactor to format better
-        System.out.println(Arrays.toString(ar) + " ar has been sorted");
+
+        System.out.printf("Boyer-Moore's voting algorithm 655: %d\n binary search : " +
+                        "1 is located at the  position of ar %d position of ar\n" +
+                        "" , boyerMooreVoting(new int[]{6,5,5}),
+                binarySearch(ar, 0, ar.length - 1, 1));
+
         System.out.println("1 is located at the " + binarySearch(ar, 0, ar.length - 1, 1) + " position of ar");
         System.out.println("This is the reverse int of  1234567: " + revInteger(1234567));
         System.out.println(Arrays.toString(ar));
@@ -50,7 +52,11 @@ public class Main {
         int value = lL.returnLastValue();
         System.out.println(value);
 
-        //reverse a list with a stack
+        QuickSort q = new QuickSort();
+        q.sort(ar, 0, ar.length - 1);
+        //refactor to format better
+        System.out.println(Arrays.toString(ar) + " ar has been sorted");
+
         System.out.println("Reverse  List with a Stack: ");
         Stack<String> stack = new Stack<>();
         List<String> list = new ArrayList<>();
@@ -80,13 +86,13 @@ public class Main {
     }
 
     //longest word in a string
-    public static String LongestWord(String sen) {
+    public static String LongestWord(String s) {
         String longest = "";
         //reg ex non word chars instead?
-        StringTokenizer st = new StringTokenizer(sen, " \t\n!@#$%^&*()\\/'\"-_+=.,");
-        while(st.hasMoreTokens()) {
+        StringTokenizer st = new StringTokenizer(s, " \t\n!@#$%^&*()\\/'\"-_+=.,");
+        while (st.hasMoreTokens()) {
             String tok = st.nextToken();
-            if(tok.length() > longest.length()) {
+            if (tok.length() > longest.length()) {
                 longest = tok;
             }
         }
@@ -125,8 +131,7 @@ public class Main {
         for (char c : s.toCharArray()) {
             if (left.indexOf(c) != -1) {
                 buffer.push(c);
-            }
-            else if (right.indexOf(c) != -1) {
+            } else if (right.indexOf(c) != -1) {
                 if (buffer.isEmpty()) {
                     return false;
                 }
@@ -148,31 +153,54 @@ public class Main {
     //array manipulation -----------------------------------------------------------------------------------------------
 
     // length  how many to shift  index
-    public static int[] reverseArray(int [] a) {
+    public static int[] reverseArray(int[] a) {
         int n = a.length;
-        int[] rev = new int[n];
+        int[] revA = new int[n];
         for (int i = n - 1; i >= 0; i--) {
-            rev[n - 1 - i] = a[i];
+            revA[n - 1 - i] = a[i];
         }
-        return rev;
+        return revA;
     }
+
     //Rotate array left
     public static int[] rotateArrayLeft(int[] a, int d) {
         int n = a.length;
         int[] rotA = new int[n];
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             rotA[(n - d + i) % n] = a[i];
         }
         return rotA;
     }
+
     //Rotate array left
     public static int[] rotateArrayRight(int[] a, int d) {
         int n = a.length;
         int[] rotA = new int[n];
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             rotA[(n + i + d) % n] = a[i];
         }
-        return  rotA;
+        return rotA;
+    }
+    // Classical Algorithms---------------------------------------------------------------------------------------------
+
+    /* Boyer Moore's voting algorithm */
+
+    public static int boyerMooreVoting(int[] x) {
+        int n = x.length;
+        // Count
+        int a = 0;
+        // Candidate
+        int b = 0;
+
+        for(int i = 0; i < n; i++) {
+            if(a == 0) {
+                b = x[i];
+            }
+            a += x[i] == b ? 1 : -1;
+        }
+
+        return b;
+
     }
     //Sorting algorithms -----------------------------------------------------------------------------------------------
 
@@ -195,9 +223,9 @@ public class Main {
     }
 
     //Insertion Sort
-    public static  int[] insertionSortI(int[] a) {
+    public static int[] insertionSortI(int[] a) {
         int n = a.length;
-        for(int i = 1; i < n; i++) {
+        for (int i = 1; i < n; i++) {
             int c = a[i];
             int j = i;
             while (j > 0 && a[j - 1] > c) {
@@ -212,22 +240,22 @@ public class Main {
     //Insertions Sort overload
     public static char[] insertionSortC(char[] a) {
         int n = a.length;
-        for(int i = 1; i < n; i++) {
+        for (int i = 1; i < n; i++) {
             char c = a[i];
             int j = i;
-            while(j > 0 && a[j - 1] > c) {
+            while (j > 0 && a[j - 1] > c) {
                 a[j] = a[j - 1];
                 j--;
             }
             a[j] = c;
         }
-        return  a;
+        return a;
     }
 
     //Recursive QuickSort
     public static class QuickSort {
         public void sort(int[] a, int b, int e) {
-            if(b < e) {
+            if (b < e) {
                 int pI = partition(a, b, e);
                 sort(a, b, pI - 1);
                 sort(a, pI + 1, e);
@@ -237,8 +265,8 @@ public class Main {
         private int partition(int[] a, int b, int e) {
             int p = a[e];
             int i = b - 1;
-            for(int j = b; j < e; j++) {
-                if(a[j] <= p) {
+            for (int j = b; j < e; j++) {
+                if (a[j] <= p) {
                     i++;
                     int t = a[i];
                     a[i] = a[j];
@@ -255,11 +283,11 @@ public class Main {
 
     public static int factorial(int n) throws IllegalArgumentException {
         //check if n < 0
-        if(n < 0) {
+        if (n < 0) {
             throw new IllegalArgumentException();
         }
         //check if n = 0
-        if(n == 0) {
+        if (n == 0) {
             return 1;
         }
         //perform n*(n-1)!
@@ -273,69 +301,71 @@ public class Main {
 
     //Recursive Binary Search
     public static int binarySearch(int[] a, int b, int e, int x) {
-        if(b <= e) {
+        if (b <= e) {
             int m = b + (e - b) / 2;
-            if(a[m] == x) {
+            if (a[m] == x) {
                 return m;
             }
-            if(a[m] > x) {
+            if (a[m] > x) {
                 return binarySearch(a, b, m - 1, x);
-            }
-            else {
+            } else {
                 return binarySearch(a, e + 1, e, x);
             }
-        }
-        else {
+        } else {
             return -1;
         }
     }
 
     //Reverse int-------------------------------------------------------------------------------------------------------
-    private static int revInteger(int x) {
-        int r = 0;
-        while(x != 0) {
-            int n = x % 10;
-            r = n + r * 10;
-            x /= 10;
+    private static int revInteger(int a) {
+
+        int t = 0;
+        while(a > 0) {
+            int r = a % 10;
+            t = r + (t * 10);
+            a /= 10;
         }
-        return r;
+        return a;
     }
+
     //Binary sum--------------------------------------------------------------------------------------------------------
     static long binarySum(long[] data, int a, int b) {
         if (a > b) {
             return 0;
-        }
-        else if (a == b) {
+        } else if (a == b) {
             return data[a];
-        }
-        else {
+        } else {
             int m = (a + b) / 2;
             return binarySum(data, a, m) + binarySum(data, m + 1, b);
         }
     }
+
     //Recursive GCD or HCF of the two integers--------------------------------------------------------------------------
     static int gcd(int a, int b) {
-        if(a == 0) {
+        if (a == 0) {
             return b;
         }
-        if(b == 0) {
+        if (b == 0) {
             return a;
         }
-        if(a == b) {
+        if (a == b) {
             return a;
         }
-        if(a > b) {
+        if (a > b) {
             return gcd(a - b, b);
         }
         return gcd(a, b - a);
     }
+
     //fibonacci sequence------------------------------------------------------------------------------------------------
     static int fib(int n) {
-        if(n <= 1) {
+        if (n <= 1) {
             return n;
         }
         return fib(n - 1) + fib(n - 2);
     }
+
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      -Two children, Lily and Ron, want to share a chocolate bar. Each of the squares has an integer on it.
      -Lily decides to share a contiguous segment of the bar selected such that:
@@ -352,12 +382,13 @@ public class Main {
         for (int i = 0; i <= n - m; i++) {
             //Use the stream to iterate through the array by segments of i + m and sum up the value to compare
             if (Arrays.stream(intA, i, i + m).mapToInt(Integer::intValue)
-                .sum() == d) {
+                    .sum() == d) {
                 count++;
             }
         }
         return count;
     }
+
     /*static int walleeCleanUp(int p , List<Integer> walleeTrack) {
         int n = walleeTrack.size() + 1;
         int count = 0;
@@ -391,6 +422,7 @@ public class Main {
         }
         return q;
     }
+
     /*
      Given an array of bird sightings where every element represents a bird type id, determine the id of the most
      frequently sighted type. If more than 1 type has been spotted that maximum amount, return the smallest of their ids.
@@ -415,6 +447,7 @@ public class Main {
         }
         return birdId;
     }
+
     /*You are choreographing a circus show with various animals. For one act, you are given two
      kangaroos on a number line ready to jump in the positive direction (i.e, toward positive infinity).
      The first kangaroo starts at location  x1 and moves at a rate of v1 meters per jump.
@@ -472,63 +505,54 @@ static int[] permutationEquation(int[] p) {
    - be deleted from either of the strings.
    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - */
     static int makeAnagram(String a, String b) {
-        HashMap<Character,Integer> h = new HashMap<>();
+        HashMap<Character, Integer> h = new HashMap<>();
         //how many left
         int count = 0;
         //how many are not in there at all
         int tempA = 0;
-        //swap if b larger than a
-        if (b.length() > a.length()) {
-            String temp = a;
-            a = b;
-            b = temp;
-        }
         //fill the HashMap
-        for(char c : a.toCharArray()) {
-            if(h.containsKey(c)) {
+        for (char c : a.toCharArray()) {
+            if (h.containsKey(c)) {
                 int value = h.get(c);
                 h.put(c, value + 1);
-            }
-            else {
+            } else {
                 h.put(c, 1);
             }
         }
         //remove items that exist in both a and b and count missing items
-        for(char c : b.toCharArray()) {
-            if(h.containsKey(c) && h.get(c) >= 1) {
+        for (char c : b.toCharArray()) {
+            if (h.containsKey(c) && h.get(c) >= 1) {
                 int value = h.get(c);
                 h.put(c, value - 1);
-            }
-            else {
+            } else {
                 tempA++;
             }
         }
         //count remaining items that would need to be deleted
-        for(Map.Entry<Character, Integer> entry : h.entrySet()) {
+        for (Map.Entry<Character, Integer> entry : h.entrySet()) {
             count += entry.getValue();
         }
         //return the amount of missing items plus the count of remaining in the HashMap
         return count + tempA;
     }
-    public static void ransomNote(String[] mag, String[] note ) {
-        Map<String,Integer> m = new HashMap<>();
 
-        for(String s : note) {
-            if(m.containsKey(s)) {
+    public static void ransomNote(String[] mag, String[] note) {
+        Map<String, Integer> m = new HashMap<>();
+
+        for (String s : note) {
+            if (m.containsKey(s)) {
                 int v = m.get(s);
                 m.put(s, v + 1);
-            }
-            else {
+            } else {
                 m.put(s, 1);
             }
         }
-        for(String s : mag) {
-            if(m.containsKey(s)) {
+        for (String s : mag) {
+            if (m.containsKey(s)) {
                 int v = m.get(s);
-                if(v == 1) {
+                if (v == 1) {
                     m.remove(s);
-                }
-                else  {
+                } else {
                     m.put(s, v - 1);
                 }
             }
@@ -537,6 +561,7 @@ static int[] permutationEquation(int[] p) {
         String result = m.isEmpty() ? "Yes" : "No";
         System.out.println(result);
     }
+
     //Singly Linked List t is temp
     public static class HomeMadeLinkedList {
         Node head;
@@ -544,6 +569,7 @@ static int[] permutationEquation(int[] p) {
         private HomeMadeLinkedList(Node head) {
             this.head = head;
         }
+
         static HomeMadeLinkedList createHomeMadeLinkedList(Node head) {
             return new HomeMadeLinkedList(head);
         }
@@ -565,13 +591,14 @@ static int[] permutationEquation(int[] p) {
         public boolean isEmpty() {
             return head == null;
         }
+
         public boolean equals(Object o) {
             //check null
-            if(o == null) {
+            if (o == null) {
                 return false;
             }
             //check class
-            if(getClass() != o.getClass()) {
+            if (getClass() != o.getClass()) {
                 return false;
             }
             //cast to class type
@@ -580,9 +607,9 @@ static int[] permutationEquation(int[] p) {
             //traverse list and check elements
             Node a = head;
             Node b = other.head;
-            while(head.next != null) {
+            while (head.next != null) {
                 //in this structure they are ints
-                if(a.data == b.data) return false;
+                if (a.data == b.data) return false;
                 a = a.next;
                 b = b.next;
             }
@@ -590,51 +617,56 @@ static int[] permutationEquation(int[] p) {
             return true;
 
         }
+
         public void push(int data) {
             Node newNode = Node.createNode(data);
             newNode.next = head;
             head = newNode;
         }
+
         public void deleteNode(int pos) {
-            if(head == null) {
+            if (head == null) {
                 return;
             }
-            Node t = head;
-            if(pos == 0) {
-                head = t.next;
+            Node temp = head;
+            if (pos == 0) {
+                head = temp.next;
                 return;
             }
-            while(pos - 1 > 0) {
-                t = t.next;
+            while (pos - 1 > 0) {
+                temp = temp.next;
                 pos--;
             }
-            if(t == null || t.next == null) {
+            if (temp == null || temp.next == null) {
                 return;
             }
             //previous node is found with the loop above t.next 
-            t.next = t.next.next;
+            temp.next = temp.next.next;
         }
+
         public void removeLast() {
             Node head = this.head;
-            if(this.head == null) {
-               System.out.println("The head of the list is null");
+            if (this.head == null) {
+                System.out.println("The head of the list is null");
             }
-            if(head.next == null) {
+            if (head.next == null) {
                 System.out.println(("This is the end of the list or next is null"));
             }
             Node secondToLast = head;
-            while(secondToLast.next.next != null) {
+            while (secondToLast.next.next != null) {
                 secondToLast = secondToLast.next;
             }
             secondToLast.next = null;
         }
+
         public Node returnLast() {
             Node head = this.head;
-            while(head.next != null){
+            while (head.next != null) {
                 head = head.next;
             }
             return head;
         }
+
         public int returnLastValue() {
             Node head = this.head;
             while (head.next != null) {
@@ -642,20 +674,20 @@ static int[] permutationEquation(int[] p) {
             }
             return head.data;
         }
+
         public void insertPos(int pos, int data) {
             //if given head then head = headNode
             Node headNode = this.head;
-            if(pos < 0) {
+            if (pos < 0) {
                 System.out.println("Invalid position");
             }
-            if(pos == 0) {
+            if (pos == 0) {
                 Node newNode = Node.createNode(data);
                 newNode.next = headNode;
                 this.head = newNode;
-            }
-            else {
-                while(pos-- >= 0) {
-                    if(pos == 0) {
+            } else {
+                while (pos-- >= 0) {
+                    if (pos == 0) {
                         Node newNode = Node.createNode(data);
                         newNode.next = headNode.next;
                         headNode.next = newNode;
@@ -664,6 +696,7 @@ static int[] permutationEquation(int[] p) {
                 }
             }
         }
+
         public void reverseList() {
             Node tail = null;
             Node t;
@@ -676,87 +709,103 @@ static int[] permutationEquation(int[] p) {
             head = tail;
             //in hackerrank return tail
         }
+
         //     Complete this method;
         public void printList() {
             Node node = this.head;
-            while(node != null) {
+            while (node != null) {
                 System.out.print(node.data);
                 node = node.next;
-                if(node != null) {
+                if (node != null) {
                     System.out.print(",");
                 }
             }
             System.out.println();
         }
+
         public void reversePrint(Node head) {
-            if(head != null) {
+            if (head != null) {
                 reversePrint(head.next);
                 System.out.print(head.data + ",");
             }
         }
     }
+
     public static class HomemadeDoublyLinkedList<E> {
         //sentinels
         private Node<E> header;
         private Node<E> trailer;
         //size
         private int size = 0;
+
         private static class Node<E> {
             private E element;
             private Node<E> prev;
             private Node<E> next;
+
             public Node(E e, Node<E> p, Node<E> n) {
                 this.element = e;
                 this.prev = p;
                 this.next = n;
             }
         }
+
         private HomemadeDoublyLinkedList(Node<E> header, Node<E> trailer) {
             this.header = header;
             this.trailer = trailer;
             header.next = trailer;
         }
+
         public HomemadeDoublyLinkedList<E> createEmptyHDLL() {
-            Node<E> h = new Node<>(null,null,null);
+            Node<E> h = new Node<>(null, null, null);
             Node<E> t = new Node<>(null, header, null);
-            return new HomemadeDoublyLinkedList<>(h,t);
+            return new HomemadeDoublyLinkedList<>(h, t);
         }
+
         public int size() {
             return size;
         }
+
         public boolean isEmpty() {
             return size == 0;
         }
+
         public E first() {
-            if(isEmpty()) {
+            if (isEmpty()) {
                 return null;
             }
             return header.next.element;
         }
+
         public E last() {
-            if(isEmpty()) {
+            if (isEmpty()) {
                 return null;
             }
             return trailer.prev.element;
         }
+
         public void addFirst(E e) {
             addBetween(e, header, header.next);
         }
+
         public void addLast(E e) {
             addBetween(e, trailer, trailer.prev);
         }
+
         public E removeFirst(E e) {
-            if(isEmpty()) {
+            if (isEmpty()) {
                 return null;
             }
             return remove(header.next);
         }
+
         public E removeLast(E e) {
-            if(isEmpty()) {
-              return null;
+            if (isEmpty()) {
+                return null;
             }
             return remove(trailer.prev);
         }
+
         //O(1)
         private void addBetween(E e, Node<E> predecessor, Node<E> successor) {
             Node<E> newest = new Node<>(e, predecessor, successor);
@@ -764,6 +813,7 @@ static int[] permutationEquation(int[] p) {
             successor.prev = newest;
             size++;
         }
+
         private E remove(Node<E> node) {
             Node<E> predecessor = node.prev;
             Node<E> successor = node.next;
@@ -773,6 +823,7 @@ static int[] permutationEquation(int[] p) {
             return node.element;
         }
     }
+
     public static class ArrayQueue<E> implements Queue<E> {
         //Space complexity O(N) where n is the size of the array
         private E[] data;
@@ -780,9 +831,10 @@ static int[] permutationEquation(int[] p) {
         private int sz = 0;
 
         public ArrayQueue() {
-           this(0);
+            this(0);
         }
-        public  ArrayQueue(int capacity) {
+
+        public ArrayQueue(int capacity) {
             //Suppress cast warning because we are using a generic class
             @SuppressWarnings("unchecked") E[] data = (E[]) new Object[capacity];
             this.data = data;
@@ -875,7 +927,7 @@ static int[] permutationEquation(int[] p) {
             if (isEmpty()) return null;
             E answer = data[f];
             data[f] = null;
-            f = (f +1) % data.length;
+            f = (f + 1) % data.length;
             sz--;
             return answer;
         }
@@ -893,9 +945,11 @@ static int[] permutationEquation(int[] p) {
             return data[f];
         }
     }
+
     //Adapter pattern
     public static class LinkedQueue<E> implements Queue<E> {
         private LinkedList<E> list;
+
         public LinkedQueue() {
             this.list = new LinkedList<>();
         }
@@ -969,11 +1023,10 @@ static int[] permutationEquation(int[] p) {
 
         @Override
         public boolean offer(E e) {
-            if(e != null) {
+            if (e != null) {
                 list.addLast(e);
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -999,5 +1052,296 @@ static int[] permutationEquation(int[] p) {
             return list.peekFirst();
         }
     }
-}
 
+    public interface Position<E> {
+        E getElement() throws IllegalStateException;
+    }
+
+    public interface PositionalList<E> {
+        int size();
+
+        boolean isEmpty();
+
+        Position<E> first();
+
+        Position<E> last();
+
+        Position<E> before(Position<E> p) throws IllegalArgumentException;
+
+        Position<E> after(Position<E> p) throws IllegalArgumentException;
+
+        Position<E> addFirst(E e);
+
+        Position<E> addLast(E e);
+
+        Position<E> addBefore(Position<E> p, E e) throws IllegalArgumentException;
+
+        ;
+
+        Position<E> addAfter(Position<E> p, E e) throws IllegalArgumentException;
+
+        ;
+
+        E set(Position<E> p, E e) throws IllegalArgumentException;
+
+        E remove(Position<E> p, E e) throws IllegalArgumentException;
+    }
+
+    public static class PositionalLinkedList<E> implements PositionalList<E> {
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
+
+        @Override
+        public Position<E> first() {
+            return position(header.next);
+        }
+
+        @Override
+        public Position<E> last() {
+            return position(trailer.prev);
+        }
+
+        @Override
+        public Position<E> before(Position<E> p) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return position(node.prev);
+        }
+
+        @Override
+        public Position<E> after(Position<E> p) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return position(node.next);
+        }
+
+        @Override
+        public Position<E> addFirst(E e) {
+            return addBetween(e, header, header.next);
+        }
+
+        @Override
+        public Position<E> addLast(E e) {
+            return addBetween(e, trailer.prev, trailer);
+        }
+
+        @Override
+        public Position<E> addBefore(Position<E> p, E e) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return addBetween(e, node.prev, node);
+        }
+
+        @Override
+        public Position<E> addAfter(Position<E> p, E e) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            return addBetween(e, node, node.next);
+        }
+
+        @Override
+        public E set(Position<E> p, E e) throws IllegalArgumentException {
+            Node<E> node = validate(p);
+            E answer = node.element;
+            node.element = e;
+            return answer;
+        }
+
+        @Override
+        public E remove(Position<E> p, E e) throws IllegalArgumentException {
+            //Validate the position
+            Node<E> node = validate(p);
+            Node<E> predecessor = node.prev;
+            Node<E> successor = node.next;
+            predecessor.next = successor;
+            successor.prev = predecessor;
+            size--;
+            E answer = node.element;
+            node.element = null;
+            node.next = null;
+            node.prev = null;
+            return answer;
+        }
+
+        //Sentinels x
+        Node<E> trailer;
+        Node<E> header;
+
+        int size = 0;
+
+        private static class Node<E> implements Position {
+
+            private E element;
+            private Node<E> prev;
+            private Node<E> next;
+
+            private Node(Node<E> prev, Node<E> next, E element) {
+
+                this.prev = prev;
+                this.next = next;
+                this.element = element;
+
+            }
+
+            public Node<E> getInstance(Node<E> prev, Node<E> next, E element) {
+                return new Node<E>(prev, next, element);
+            }
+
+            @Override
+            public Object getElement() throws IllegalStateException {
+                if (next == null) {
+                    throw new IllegalStateException("Position is no longer valid");
+                }
+                return element;
+            }
+        }
+
+        private PositionalLinkedList(Node<E> header, Node<E> trailer) {
+            this.header = header;
+            this.trailer = trailer;
+            header.next = trailer;
+        }
+
+        public PositionalLinkedList<E> getInstance() {
+            Node<E> h = new Node<>(null, null, null);
+            Node<E> t = new Node<>(null, header, null);
+            return new PositionalLinkedList<E>(h, t);
+        }
+
+        // Private utilities  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        private Position<E> addBetween(E e, Node<E> pred, Node<E> succ) {
+            Node<E> newest = new Node<>(pred, succ, e);
+            pred.next = newest;
+            succ.prev = newest;
+            size++;
+            return newest;
+        }
+
+        private Node<E> validate(Position<E> p) throws IllegalArgumentException {
+            if (!(p instanceof Node)) throw new IllegalArgumentException("Invalid position");
+            Node<E> node = (Node<E>) p; // safe cast
+            if (node.next == null) {
+                throw new IllegalArgumentException("position is no longer in the list");
+            }
+            return node;
+        }
+
+        private Position<E> position(Node<E> node) {
+            if (node == header || node == trailer) {
+                return null; // Deny sentinel access to user
+            }
+            return node;
+        }
+
+    }
+
+    public interface Tree<E> extends Iterable<E> {
+        Position<E> root();
+
+        Position<E> parent(Position<E> p) throws IllegalArgumentException;
+
+        Iterable<Position<E>> children(Position<E> p) throws IllegalArgumentException;
+
+        int numChildren(Position<E> p) throws IllegalArgumentException;
+
+        boolean isInternal(Position<E> p) throws IllegalArgumentException;
+
+        boolean isExternal(Position<E> p) throws IllegalArgumentException;
+
+        boolean isRoot(Position<E> p) throws IllegalArgumentException;
+
+        int size();
+
+        boolean isEmpty();
+
+        Iterator<E> iterator();
+
+        Iterable<Position<E>> positions();
+    }
+
+    public abstract class AbstractTree<E> implements Tree<E> {
+        public int depth(Position<E> p) {
+            if (isRoot(p)) {
+                return 0;
+            } else {
+                return 1 + depth(parent(p));
+            }
+        }
+
+        public int height(Position<E> p) {
+            int h = 0;
+            for (Position<E> c : children(p)) {
+                h = Math.max(h, 1 + height(c));
+            }
+            return h;
+        }
+
+        @Override
+        public boolean isInternal(Position<E> p) throws IllegalArgumentException {
+            return numChildren(p) > 0;
+        }
+
+        @Override
+        public boolean isExternal(Position<E> p) throws IllegalArgumentException {
+            return numChildren(p) == 0;
+        }
+
+        @Override
+        public boolean isRoot(Position<E> p) throws IllegalArgumentException {
+            return p == root();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
+    }
+
+    public interface BinaryTree<E> extends Tree<E> {
+        Position<E> left(Position<E> p) throws IllegalArgumentException;
+
+        Position<E> right(Position<E> p) throws IllegalArgumentException;
+
+        Position<E> sibling(Position<E> p) throws IllegalArgumentException;
+    }
+
+    public abstract class AbstractBinaryTree<E> extends AbstractTree<E> implements BinaryTree<E> {
+        public Position<E> sibling(Position<E> p) {
+            Position<E> parent = parent(p);
+            if (parent == null) return null;
+            if (p == left(p)) return right(p);
+            else return left(p);
+        }
+
+        @Override
+        public int numChildren(Position<E> p) throws IllegalArgumentException {
+            int count = 0;
+            if (left(p) != null) count++;
+            if (right(p) != null) count++;
+            return count;
+        }
+
+        @Override
+        public Iterable<Position<E>> children(Position<E> p) throws IllegalArgumentException {
+            List<Position<E>> snapshot = new ArrayList<>(2);
+            if (left(p) != null) snapshot.add(left(p));
+            if (right(p) != null) snapshot.add(right(p));
+            return snapshot;
+        }
+    }
+}
+/* practice
+    double palette = .1023912831723; // this doule represents the value of your texture
+    double multiplier = .25;
+
+        if (true) {
+                palette *= 2;
+                for (int i = 1; i > 8; i++) {
+                //simulated condition
+                /*
+                palette += texture(image_smooth
+                 */
