@@ -5,19 +5,6 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        //practice
-        double palette = .1023912831723; // this doule represents the value of your texture
-        double multiplier = .25;
-
-        if (true) {
-            palette *= 2;
-            for (int i = 1; i > 8; i++) {
-                //simulated condition
-                /*
-                palette += texture(image_smooth
-                 */
-            }
-        }
         int[] ar = new int[]{5, 3, 1, 6, 4, 8, 2, 7};
         char[] cAr = new char[]{'a', 'b', 'e', 'w', 'a', 'g', 'h', 'h', 'g'};
         String balanced = "{}[]()";
@@ -26,10 +13,12 @@ public class Main {
         List<Integer> walleeInput2 = Arrays.asList(1, 0, 1, 0, 1, 1, 1);
         //System.out.println(walleeCleanUp( 4, walleeInput));
         //System.out.println(walleeCleanUp( 3, walleeInput2));
-        QuickSort q = new QuickSort();
-        q.sort(ar, 0, ar.length - 1);
-        //refactor to format better
-        System.out.println(Arrays.toString(ar) + " ar has been sorted");
+
+        System.out.printf("Boyer-Moore's voting algorithm 655: %d\n binary search : " +
+                        "1 is located at the  position of ar %d position of ar\n" +
+                        "" , boyerMooreVoting(new int[]{6,5,5}),
+                binarySearch(ar, 0, ar.length - 1, 1));
+
         System.out.println("1 is located at the " + binarySearch(ar, 0, ar.length - 1, 1) + " position of ar");
         System.out.println("This is the reverse int of  1234567: " + revInteger(1234567));
         System.out.println(Arrays.toString(ar));
@@ -63,7 +52,11 @@ public class Main {
         int value = lL.returnLastValue();
         System.out.println(value);
 
-        //reverse a list with a stack
+        QuickSort q = new QuickSort();
+        q.sort(ar, 0, ar.length - 1);
+        //refactor to format better
+        System.out.println(Arrays.toString(ar) + " ar has been sorted");
+
         System.out.println("Reverse  List with a Stack: ");
         Stack<String> stack = new Stack<>();
         List<String> list = new ArrayList<>();
@@ -93,10 +86,10 @@ public class Main {
     }
 
     //longest word in a string
-    public static String LongestWord(String sen) {
+    public static String LongestWord(String s) {
         String longest = "";
         //reg ex non word chars instead?
-        StringTokenizer st = new StringTokenizer(sen, " \t\n!@#$%^&*()\\/'\"-_+=.,");
+        StringTokenizer st = new StringTokenizer(s, " \t\n!@#$%^&*()\\/'\"-_+=.,");
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
             if (tok.length() > longest.length()) {
@@ -187,6 +180,27 @@ public class Main {
             rotA[(n + i + d) % n] = a[i];
         }
         return rotA;
+    }
+    // Classical Algorithms---------------------------------------------------------------------------------------------
+
+    /* Boyer Moore's voting algorithm */
+
+    public static int boyerMooreVoting(int[] x) {
+        int n = x.length;
+        // Count
+        int a = 0;
+        // Candidate
+        int b = 0;
+
+        for(int i = 0; i < n; i++) {
+            if(a == 0) {
+                b = x[i];
+            }
+            a += x[i] == b ? 1 : -1;
+        }
+
+        return b;
+
     }
     //Sorting algorithms -----------------------------------------------------------------------------------------------
 
@@ -303,14 +317,15 @@ public class Main {
     }
 
     //Reverse int-------------------------------------------------------------------------------------------------------
-    private static int revInteger(int k) {
-        int x = 0;
-        while (k != 0) {
-            int n = k % 10;
-            x = n + x * 10;
-            k /= 10;
+    private static int revInteger(int a) {
+
+        int t = 0;
+        while(a > 0) {
+            int r = a % 10;
+            t = r + (t * 10);
+            a /= 10;
         }
-        return x;
+        return a;
     }
 
     //Binary sum--------------------------------------------------------------------------------------------------------
@@ -349,6 +364,7 @@ public class Main {
         }
         return fib(n - 1) + fib(n - 2);
     }
+
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      -Two children, Lily and Ron, want to share a chocolate bar. Each of the squares has an integer on it.
@@ -1318,3 +1334,14 @@ static int[] permutationEquation(int[] p) {
         }
     }
 }
+/* practice
+    double palette = .1023912831723; // this doule represents the value of your texture
+    double multiplier = .25;
+
+        if (true) {
+                palette *= 2;
+                for (int i = 1; i > 8; i++) {
+                //simulated condition
+                /*
+                palette += texture(image_smooth
+                 */
